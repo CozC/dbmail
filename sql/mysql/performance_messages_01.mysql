@@ -1,0 +1,4 @@
+# add a specific index to dbmail_messages. It shoud help ease on selecting various messages
+
+ALTER TABLE `dbmail_messages` ADD INDEX `status_index_mailbox` (`status`, `mailbox_idnr`);
+
