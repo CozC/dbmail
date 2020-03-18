@@ -791,11 +791,14 @@ static void _fetch_headers(ImapSession *self, body_fetch *bodyfetch, gboolean no
 			"LEFT JOIN %sheadervalue v ON h.headervalue_id=v.id "
 			"WHERE m.mailbox_idnr = %" PRIu64 " "
 			"AND m.message_idnr %s "
-			"AND n.headername %s IN ('%s') "
+			"AND m.status IN (%d,%d) " 										//patch cc, valid messages, included also the deleted ones, in case clients decide to retrieve headers from deleted messages
+			//"AND n.headername %s IN ('%s') " 								//patch cc, removed due to expensive sql
+            "having seq < %d " 												//patch cc, removing the above conditions needs a restriction, patched added
 			"ORDER BY message_idnr, seq",
 			not?"":fieldorder->str,
 			DBPFX, DBPFX, DBPFX, DBPFX,
 			self->mailbox->id, p_string_str(range), 
+			 MESSAGE_STATUS_NEW, MESSAGE_STATUS_SEEN, fieldseq, 			//patch cc, search only in those messages, no not allow deleted messages
 			not?"NOT":"", bodyfetch->hdrnames);
 
 	if (fieldorder)

@@ -99,8 +99,10 @@ static T state_load_messages(T M, Connection_T c)
 			"SELECT seen_flag, answered_flag, deleted_flag, flagged_flag, "
 			"draft_flag, recent_flag, %s, rfcsize, seq, message_idnr, status FROM %smessages m "
 			"LEFT JOIN %sphysmessage p ON p.id = m.physmessage_id "
-			"WHERE m.mailbox_idnr = ? AND m.status IN (%d,%d,%d) ORDER BY message_idnr ASC",
-			frag, DBPFX, DBPFX, MESSAGE_STATUS_NEW, MESSAGE_STATUS_SEEN, MESSAGE_STATUS_DELETE);
+			//"WHERE m.mailbox_idnr = ? AND m.status IN (%d,%d,%d) ORDER BY message_idnr ASC",
+			//frag, DBPFX, DBPFX, MESSAGE_STATUS_NEW, MESSAGE_STATUS_SEEN, MESSAGE_STATUS_DELETE);
+			"WHERE m.mailbox_idnr = ? AND m.status IN (%d,%d) ORDER BY message_idnr ASC", 			//patch cc, do not load deleted messages
+            frag, DBPFX, DBPFX, MESSAGE_STATUS_NEW, MESSAGE_STATUS_SEEN); 							//patch cc, do not load deleted messages
 
 	msginfo = g_tree_new_full((GCompareDataFunc)ucmpdata, NULL,(GDestroyNotify)g_free,(GDestroyNotify)MessageInfo_free);
 
